@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дарима Ганжурова](https://up.htmlacademy.ru/javascript/17/user/686065).
-* Наставник: `Неизвестно`.
+* Наставник: [Ivan Shpartko].
 
 ---
 
