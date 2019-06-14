@@ -34,28 +34,28 @@
 
     var avatarNumbers = getArr(1, 8);
 
-    var widthMap = element.clientWidth;
-    var widthMapPin = 50;
     var heightMapPin = 70;
     var topMapPinY = 130;
     var bottomMapPinY = 630;
+    var leftX = 0;
+    var rightX = element.clientWidth;
     var topY = topMapPinY + heightMapPin;
     var bottomY = bottomMapPinY + heightMapPin;
-    var arrX = getArr(0, widthMap);
+    var arrX = getArr(leftX, rightX);
     var arrY = getArr(topY, bottomY);
 
     for (var i = 0; i < quantity; i++) {
       var avatarNumberValue = getRandomValue(avatarNumbers, true);
-      var userAvatarNamber = '0' + String(avatarNumberValue);
+      var userAvatarNumber = '0' + String(avatarNumberValue);
 
       var housingType = getRandomValue(HOUSING_TYPE, false);
 
-      var x = getRandomValue(arrX, false) - widthMapPin / 2;
-      var y = getRandomValue(arrY, false) - heightMapPin;
+      var x = getRandomValue(arrX, false);
+      var y = getRandomValue(arrY, false);
 
       var mapPin = {
         author: {
-          avatar: 'img/avatars/user' + userAvatarNamber + '.png'
+          avatar: 'img/avatars/user' + userAvatarNumber + '.png'
         },
         offer: {
           type: housingType
@@ -72,13 +72,18 @@
     return arr;
   };
 
-  var renderMapPin = function (mapPin, templatePin, title) {
+  var renderMapPin = function (mapPin, templatePin) {
     var mapPinElement = templatePin.cloneNode(true);
     var mapPinImg = mapPinElement.querySelector('img');
 
-    mapPinElement.style = 'left: ' + mapPin.location.x + 'px; top: ' + mapPin.location.y + 'px;';
+    var widthMapPin = 50;
+    var heightMapPin = 70;
+    var x = mapPin.location.x - widthMapPin / 2;
+    var y = mapPin.location.y - heightMapPin;
+
+    mapPinElement.style = 'left: ' + x + 'px; top: ' + y + 'px;';
     mapPinImg.src = mapPin.author.avatar;
-    mapPinImg.alt = title;
+    mapPinImg.alt = '';
 
     return mapPinElement;
   };
@@ -94,10 +99,8 @@
     var numberMapPins = 8;
     var mapPins = getMapPinsArr(element, numberMapPins);
 
-    var noticeTitles = ['Заголовок1', 'Заголовок2', 'Заголовок3', 'Заголовок4', 'Заголовок5', 'Заголовок6', 'Заголовок7', 'Заголовок8'];
-
     for (var i = 0; i < mapPins.length; i++) {
-      fragment.appendChild(renderMapPin(mapPins[i], mapPinTemplate, noticeTitles[i]));
+      fragment.appendChild(renderMapPin(mapPins[i], mapPinTemplate));
     }
     mapPinsListElement.appendChild(fragment);
   };
