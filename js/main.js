@@ -7,6 +7,10 @@
     element.classList.remove(removeClassName);
   };
 
+  var addClass = function (element, addClassName) {
+    element.classList.add(addClassName);
+  };
+
   var getArr = function (min, max) {
     var arr = [];
 
@@ -105,14 +109,90 @@
     mapPinsListElement.appendChild(fragment);
   };
 
-  var showMap = function (element) {
-    removeClass(element, 'map--faded');
+  var toggleModeActiveForm = function (elFormArr, isBlocked) {
+    for (var i = 0; i < elFormArr.length; i++) {
+      var elForm = elFormArr[i];
+      var inputForm = elForm.querySelectorAll('input');
+      var selectForm = elForm.querySelectorAll('select');
+      var fieldsetForm = elForm.querySelectorAll('fieldset');
+      var elements = [inputForm, selectForm, fieldsetForm];
+
+      for (var j = 0; j < elements.length; j++) {
+        var element = elements[j];
+        for (var k = 0; k < element.length; k++) {
+          element[k].disabled = isBlocked;
+        }
+      }
+    }
+  };
+
+  var toggleModeActiveBlock = function (elBlockArr, toggleClassNameArr, isBlocked) {
+    for (var i = 0; i < elBlockArr.length; i++) {
+      var elBlock = elBlockArr[i];
+      var toggleClassName = toggleClassNameArr[i];
+
+      if (isBlocked) {
+        addClass(elBlock, toggleClassName);
+      } else {
+        removeClass(elBlock, toggleClassName);
+      }
+    }
+  };
+
+  var toggleModeActivePage = function (elBlockArr, toggleClassNameArr, elFormArr, isBlocked) {
+    toggleModeActiveBlock(elBlockArr, toggleClassNameArr, isBlocked);
+    toggleModeActiveForm(elFormArr, isBlocked);
+  };
+
+  var getCoordsAddressPinMain = function (elMap) {
+    var mapPinMainWidth = 65;
+    var mapPinMainHeight = 0;
+
+    var x = 570;
+    var y = 375;
+
+    var addressX = x + mapPinMainWidth / 2;
+    var addressY = 0;
+    var coordsAddress = [];
+
+    if (elMap.classList.contains('map--faded')) {
+      mapPinMainHeight = 65;
+      addressY = y + mapPinMainHeight / 2;
+    } else {
+      mapPinMainHeight = 87;
+      addressY = y + mapPinMainHeight;
+    }
+
+    coordsAddress = [addressX, addressY];
+
+    return coordsAddress;
+  };
+
+  var displayAddress = function (elForm, elMap) {
+    var inputAddress = elForm.querySelector('#address');
+    var coords = getCoordsAddressPinMain(elMap);
+
+    inputAddress.value = coords[0] + ', ' + coords [1];
   };
 
   var initModule = function () {
     var map = document.querySelector('.map');
+    var mapFilters = map.querySelector('.map__filters');
+    var mapPinMain = map.querySelector('.map__pin--main');
+    var adForm = document.querySelector('.ad-form');
 
-    showMap(map);
+    var pageBlocks = [map, adForm];
+    var pageForms = [mapFilters, adForm];
+    var toggleClassNames = ['map--faded', 'ad-form--disabled'];
+
+    toggleModeActivePage(pageBlocks, toggleClassNames, pageForms, true);
+    displayAddress(adForm, map);
+
+    mapPinMain.addEventListener('mouseup', function () {
+      toggleModeActivePage(pageBlocks, toggleClassNames, pageForms, false);
+      displayAddress(adForm, map);
+    });
+
     showMapPins(map);
   };
 
