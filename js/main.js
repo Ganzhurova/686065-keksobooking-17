@@ -175,11 +175,23 @@
     inputAddress.value = coords[0] + ', ' + coords [1];
   };
 
+  var syncTimeInOut = function (elTime, syncElTime) {
+    var time = elTime.value;
+    syncElTime.value = time;
+  };
+
   var initModule = function () {
     var map = document.querySelector('.map');
     var mapFilters = map.querySelector('.map__filters');
     var mapPinMain = map.querySelector('.map__pin--main');
+
     var adForm = document.querySelector('.ad-form');
+    var inputTitle = adForm.querySelector('#title');
+    var inputPrice = adForm.querySelector('#price');
+    var selectHousingType = adForm.querySelector('#type');
+    var selectTimeIn = adForm.querySelector('#timein');
+    var selectTimeOut = adForm.querySelector('#timeout');
+    var minPrice = 0;
 
     var pageBlocks = [map, adForm];
     var pageForms = [mapFilters, adForm];
@@ -191,6 +203,78 @@
     mapPinMain.addEventListener('mouseup', function () {
       toggleModeActivePage(pageBlocks, toggleClassNames, pageForms, false);
       displayAddress(adForm, map);
+    });
+
+    inputTitle.addEventListener('invalid', function () {
+      if (inputTitle.validity.tooShort) {
+        inputTitle.setCustomValidity('Заголовок должен состоять минимум из 30-и символов');
+      } else if (inputTitle.validity.tooLong) {
+        inputTitle.setCustomValidity('Заголовок не должно превышать ста символов');
+      } else if (inputTitle.validity.valueMissing) {
+        inputTitle.setCustomValidity('Обязательное поле');
+      } else {
+        inputTitle.setCustomValidity('');
+      }
+    });
+
+    inputTitle.addEventListener('input', function (evt) {
+      var target = evt.target;
+      if (target.value.length < 30) {
+        target.setCustomValidity('Заголовок должен состоять минимум из 30-и символов');
+      } else {
+        target.setCustomValidity('');
+      }
+    });
+
+    selectHousingType.addEventListener('change', function () {
+      if (selectHousingType.value === 'bungalo') {
+        inputPrice.min = '0';
+        inputPrice.placeholder = '0';
+        minPrice = inputPrice.getAttribute('placeholder');
+      } else if (selectHousingType.value === 'flat') {
+        inputPrice.min = '1000';
+        inputPrice.placeholder = '1000';
+        minPrice = inputPrice.getAttribute('placeholder');
+      } else if (selectHousingType.value === 'house') {
+        inputPrice.min = '5000';
+        inputPrice.placeholder = '5000';
+        minPrice = inputPrice.getAttribute('placeholder');
+      } else if (selectHousingType.value === 'palace') {
+        inputPrice.min = '10000';
+        inputPrice.placeholder = '10000';
+        minPrice = inputPrice.getAttribute('placeholder');
+      }
+    });
+
+    inputPrice.addEventListener('invalid', function () {
+      if (inputPrice.validity.rangeOverflow) {
+        inputPrice.setCustomValidity('Максимальная цена 1 000 000');
+      } else if (inputPrice.validity.rangeUnderflow) {
+        inputPrice.setCustomValidity('Минимальная цена ' + minPrice);
+      } else if (inputPrice.validity.valueMissing) {
+        inputPrice.setCustomValidity('Обязательное поле');
+      } else {
+        inputPrice.setCustomValidity('');
+      }
+    });
+
+    inputPrice.addEventListener('input', function (evt) {
+      var target = evt.target;
+      if (target.value > 1000000) {
+        target.setCustomValidity('Максимальная цена 1 000 000');
+      } else if (target.value < minPrice) {
+        target.setCustomValidity('Минимальная цена ' + minPrice);
+      } else {
+        target.setCustomValidity('');
+      }
+    });
+
+    selectTimeIn.addEventListener('change', function () {
+      syncTimeInOut(selectTimeIn, selectTimeOut);
+    });
+
+    selectTimeOut.addEventListener('change', function () {
+      syncTimeInOut(selectTimeOut, selectTimeIn);
     });
 
     showMapPins(map);
