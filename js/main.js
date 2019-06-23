@@ -144,35 +144,37 @@
     toggleModeActiveForm(elFormArr, isBlocked);
   };
 
-  var getCoordsAddressPinMain = function (elMap) {
-    var mapPinMainWidth = 65;
+  var getCoordsAddressPinMain = function (elPin, elMap) {
+    var mapPinMainWidth = elPin.offsetWidth;
     var mapPinMainHeight = 0;
+    var mapPinMainStyle = getComputedStyle(elPin);
 
-    var x = 570;
-    var y = 375;
+    var mapPinMainCoords = {
+      x: parseInt(mapPinMainStyle.left, 10),
+      y: parseInt(mapPinMainStyle.top, 10)
+    };
 
-    var addressX = x + mapPinMainWidth / 2;
-    var addressY = 0;
-    var coordsAddress = [];
+    var addressCoords = {
+      x: mapPinMainCoords.x + mapPinMainWidth / 2,
+      y: 0
+    };
 
     if (elMap.classList.contains('map--faded')) {
       mapPinMainHeight = 65;
-      addressY = y + mapPinMainHeight / 2;
+      addressCoords.y = mapPinMainCoords.y + mapPinMainHeight / 2;
     } else {
       mapPinMainHeight = 87;
-      addressY = y + mapPinMainHeight;
+      addressCoords.y = mapPinMainCoords.y + mapPinMainHeight;
     }
 
-    coordsAddress = [addressX, addressY];
-
-    return coordsAddress;
+    return addressCoords;
   };
 
-  var displayAddress = function (elForm, elMap) {
+  var displayAddress = function (elForm, elPin, elMap) {
     var inputAddress = elForm.querySelector('#address');
-    var coords = getCoordsAddressPinMain(elMap);
+    var coords = getCoordsAddressPinMain(elPin, elMap);
 
-    inputAddress.value = coords[0] + ', ' + coords [1];
+    inputAddress.value = coords.x + ', ' + coords.y;
   };
 
   var validationInputTitle = function (elTitleInput) {
@@ -247,6 +249,85 @@
     syncElTime.value = time;
   };
 
+  var moveMapPinMain = function (evt, elPin, isActive, elBlockArr, toggleClassNameArr, elFormArr, pinLimitCoords, elMap, elForm) {
+    evt.preventDefault();
+
+    var pinBlock = elPin.getBoundingClientRect();
+
+    var pinCoords = {
+      x: pinBlock.left + pageXOffset,
+      y: pinBlock.top + pageYOffset
+    };
+
+    var mouseOffset = {
+      x: evt.pageX - pinCoords.x,
+      y: evt.pageY - pinCoords.y
+    };
+
+    var startCoords = {
+      x: evt.pageX,
+      y: evt.pageY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      if (!isActive) {
+        toggleModeActivePage(elBlockArr, toggleClassNameArr, elFormArr, false);
+      }
+
+      isActive = true;
+
+      var endCoords = {
+        x: 0,
+        y: 0
+      };
+
+      if (moveEvt.pageX - mouseOffset.x > pinLimitCoords.rightX) {
+        endCoords.x = pinLimitCoords.rightX + mouseOffset.x;
+      } else if (moveEvt.pageX - mouseOffset.x < pinLimitCoords.leftX) {
+        endCoords.x = pinLimitCoords.leftX + mouseOffset.x;
+      } else {
+        endCoords.x = moveEvt.pageX;
+      }
+
+      if (moveEvt.pageY - mouseOffset.y > pinLimitCoords.bottomY) {
+        endCoords.y = pinLimitCoords.bottomY + mouseOffset.y;
+      } else if (moveEvt.pageY - mouseOffset.y < pinLimitCoords.topY) {
+        endCoords.y = pinLimitCoords.topY + mouseOffset.y;
+      } else {
+        endCoords.y = moveEvt.pageY;
+      }
+
+      var shift = {
+        x: startCoords.x - endCoords.x,
+        y: startCoords.y - endCoords.y
+      };
+
+      startCoords = {
+        x: endCoords.x,
+        y: endCoords.y
+      };
+
+      elPin.style.top = (elPin.offsetTop - shift.y) + 'px';
+      elPin.style.left = (elPin.offsetLeft - shift.x) + 'px';
+
+      displayAddress(elForm, elPin, elMap);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      displayAddress(elForm, elPin, elMap);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
   var initModule = function () {
     var map = document.querySelector('.map');
     var mapFilters = map.querySelector('.map__filters');
@@ -263,13 +344,24 @@
     var pageForms = [mapFilters, adForm];
     var toggleClassNames = ['map--faded', 'ad-form--disabled'];
 
+    var isActive = false;
+
+    var limitTopY = 130;
+    var limitBottomY = 630;
+
+    var mapLimitCoords = {
+      topY: map.offsetTop + limitTopY,
+      rightX: map.offsetLeft + map.offsetWidth - mapPinMain.offsetWidth,
+      bottomY: map.offsetTop + limitBottomY,
+      leftX: map.offsetLeft
+    };
+
     toggleModeActivePage(pageBlocks, toggleClassNames, pageForms, true);
-    displayAddress(adForm, map);
+    displayAddress(adForm, mapPinMain, map);
     setAttributesInputPrice(selectHousingType, inputPrice);
 
-    mapPinMain.addEventListener('mouseup', function () {
-      toggleModeActivePage(pageBlocks, toggleClassNames, pageForms, false);
-      displayAddress(adForm, map);
+    mapPinMain.addEventListener('mousedown', function (evt) {
+      moveMapPinMain(evt, mapPinMain, isActive, pageBlocks, toggleClassNames, pageForms, mapLimitCoords, map, adForm);
     });
 
     inputTitle.addEventListener('invalid', function () {
