@@ -2,15 +2,14 @@
 
 (function () {
   var mapEl = document.querySelector('.map');
-  var cards = window.cards;
-  var pinTemplate = document.querySelector('#pin')
-    .content
-    .querySelector('.map__pin');
 
   var widthPin = 50;
   var heightPin = 70;
 
   var renderPin = function (card) {
+    var pinTemplate = document.querySelector('#pin')
+      .content
+      .querySelector('.map__pin');
     var pinEl = pinTemplate.cloneNode(true);
     var pinImg = pinEl.querySelector('img');
 
@@ -21,12 +20,12 @@
     pinEl.style.top = y + 'px';
 
     pinImg.src = card.author.avatar;
-    pinImg.alt = '';
+    pinImg.alt = card.offer.title;
 
     return pinEl;
   };
 
-  window.showPins = function () {
+  var successfulLoadHandler = function (cards) {
     var pinsListEl = mapEl.querySelector('.map__pins');
 
     var fragment = document.createDocumentFragment();
@@ -36,4 +35,16 @@
     }
     pinsListEl.appendChild(fragment);
   };
+
+  var errorHandler = function () {
+    var main = document.querySelector('main');
+    var errorTemplate = document.querySelector('#error')
+      .content
+      .querySelector('.error');
+    var errorEl = errorTemplate.cloneNode(true);
+
+    main.appendChild(errorEl);
+  };
+
+  window.backend.load(successfulLoadHandler, errorHandler);
 })();

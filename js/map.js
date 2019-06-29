@@ -196,8 +196,6 @@
     toggleModeActivePage();
 
     mapPinMain.addEventListener('mousedown', onMouseDown);
-
-    window.showPins();
   };
 
   initModule();
