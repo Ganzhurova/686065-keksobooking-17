@@ -37,7 +37,7 @@
       }
     }
 
-    var takeNumber = data.length > 5 ? 5 : data.length;
+    var takeNumber = Math.min(data.length, 5);
     var fragment = document.createDocumentFragment();
 
     for (i = 0; i < takeNumber; i++) {
