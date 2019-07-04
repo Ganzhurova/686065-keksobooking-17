@@ -25,26 +25,24 @@
     return pinEl;
   };
 
-  var successfulLoadHandler = function (cards) {
+  window.renderPins = function (data) {
     var pinsListEl = mapEl.querySelector('.map__pins');
 
+    var pinButtons = pinsListEl.querySelectorAll('button');
+
+    for (var i = 0; i < pinButtons.length; i++) {
+      var pinButton = pinButtons[i];
+      if (!pinButton.classList.contains('map__pin--main')) {
+        pinButton.remove();
+      }
+    }
+
+    var takeNumber = data.length > 5 ? 5 : data.length;
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < cards.length; i++) {
-      fragment.appendChild(renderPin(cards[i]));
+    for (i = 0; i < takeNumber; i++) {
+      fragment.appendChild(renderPin(data[i]));
     }
     pinsListEl.appendChild(fragment);
   };
-
-  var errorHandler = function () {
-    var main = document.querySelector('main');
-    var errorTemplate = document.querySelector('#error')
-      .content
-      .querySelector('.error');
-    var errorEl = errorTemplate.cloneNode(true);
-
-    main.appendChild(errorEl);
-  };
-
-  window.backend.load(successfulLoadHandler, errorHandler);
 })();
