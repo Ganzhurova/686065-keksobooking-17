@@ -19,20 +19,25 @@
     updateCards();
   };
 
-  var successfulLoadHandler = function (data) {
-    cards = data;
-    window.renderPins(cards);
-  };
+  cards = window.data;
+  window.renderPins(cards);
 
-  var errorHandler = function () {
-    var main = document.querySelector('main');
-    var errorTemplate = document.querySelector('#error')
-      .content
-      .querySelector('.error');
-    var errorEl = errorTemplate.cloneNode(true);
+  // Заблокировано для отрисовки меток из моков
 
-    main.appendChild(errorEl);
-  };
-
-  window.backend.load(successfulLoadHandler, errorHandler);
+  // var successfulLoadHandler = function (data) {
+  //   cards = data;
+  //   window.renderPins(cards);
+  // };
+  //
+  // var errorHandler = function () {
+  //   var main = document.querySelector('main');
+  //   var errorTemplate = document.querySelector('#error')
+  //     .content
+  //     .querySelector('.error');
+  //   var errorEl = errorTemplate.cloneNode(true);
+  //
+  //   main.appendChild(errorEl);
+  // };
+  //
+  // window.backend.load(successfulLoadHandler, errorHandler);
 })();

@@ -1,56 +1,107 @@
 'use strict';
 
 (function () {
-  var HOUSING_TYPE = ['palace', 'flat', 'house', 'bungalo'];
+  var HOUSING_TYPE = [
+    'palace',
+    'flat',
+    'house',
+    'bungalo'
+  ];
+
+  var TIME = [
+    '12:00',
+    '13:00',
+    '14:00'
+  ];
+
+  var FEATURES = [
+    'wifi',
+    'dishwasher',
+    'parking',
+    'washer',
+    'elevator',
+    'conditioner'
+  ];
+
+  var photos = [
+    'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+    'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+    'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
+  ];
+
   var mapEl = document.querySelector('.map');
 
-  var getArr = function (min, max) {
-    var arr = [];
-
-    for (var i = min; i <= max; i++) {
-      arr.push(i);
-    }
-
-    return arr;
+  var pin = {
+    height: 70,
+    topY: 130,
+    bottomY: 630
   };
 
-  var getRandomValue = function (arr, isNotRepeat) {
-    var randomIndex = Math.floor(Math.random() * arr.length);
-    if (isNotRepeat) {
-      var removableArr = arr.splice(randomIndex, 1);
-      var value = removableArr[0];
-      return value;
-    } else {
-      value = arr[randomIndex];
-      return value;
-    }
+  var coords = {
+    leftX: 0,
+    rightX: mapEl.clientWidth,
+    topY: pin.topY + pin.height,
+    bottomY: pin.bottomY + pin.height
   };
 
   var maxNumberAvatars = 8;
 
-  var avatarNumbers = getArr(1, maxNumberAvatars);
+  var avatarNumbers = window.supportFunction.getArr(1, maxNumberAvatars);
 
-  var heightMapPin = 70;
-  var topMapPinY = 130;
-  var bottomMapPinY = 630;
-  var leftX = 0;
-  var rightX = mapEl.clientWidth;
-  var topY = topMapPinY + heightMapPin;
-  var bottomY = bottomMapPinY + heightMapPin;
+  var arrX = window.supportFunction.getArr(coords.leftX, coords.rightX);
+  var arrY = window.supportFunction.getArr(coords.topY, coords.bottomY);
 
-  var arrX = getArr(leftX, rightX);
-  var arrY = getArr(topY, bottomY);
+  var DataObj = function () {
+    this._render(this._getCoord(arrX), this._getCoord(arrY));
+  };
+
+  DataObj.prototype = {
+    title: 'Миленькое помещение',
+    price: 10000,
+    rooms: 4,
+    guests: 3,
+
+    _render: function (x, y) {
+      this.author = {
+        avatar: 'img/avatars/user' + this._getUserAvatarNumber() + '.png'
+      };
+      this.offer = {
+        title: this.title,
+        address: String(x) + ', ' + String(y),
+        price: this.price,
+        type: window.supportFunction.getRandomValue(HOUSING_TYPE, false),
+        rooms: this.rooms,
+        guests: this.guests,
+        checkin: window.supportFunction.getRandomValue(TIME, false),
+        checkout: window.supportFunction.getRandomValue(TIME, false),
+        features: window.supportFunction.getArrayRandomLength(FEATURES),
+        description: 'Рядом стадион',
+        photos: window.supportFunction.getArrayRandomLength(photos)
+      };
+      this.location = {
+        x: x,
+        y: y
+      };
+    },
+
+    _getUserAvatarNumber: function () {
+      var userAvatarNumber = '0' + String(window.supportFunction.getRandomValue(avatarNumbers, true));
+
+      return userAvatarNumber;
+    },
+
+    _getCoord: function (arr) {
+      var coord = window.supportFunction.getRandomValue(arr, false);
+
+      return coord;
+    }
+  };
 
   var createData = function () {
     var data = [];
 
     for (var i = 0; i < maxNumberAvatars; i++) {
-      var objData = {
-        userAvatarNumber: '0' + String(getRandomValue(avatarNumbers, true)),
-        housingType: getRandomValue(HOUSING_TYPE, false),
-        x: getRandomValue(arrX, false),
-        y: getRandomValue(arrY, false)
-      };
+      var objData = new DataObj();
 
       data.push(objData);
     }
