@@ -3,61 +3,11 @@
 (function () {
   var LIMIT_TOP_Y = 130;
   var LIMIT_BOTTOM_Y = 630;
-  var CLASS_NAMES_FOR_TOGGLE = ['map--faded', 'ad-form--disabled'];
+
 
   var mapEl = document.querySelector('.map');
-  var mapFilters = mapEl.querySelector('.map__filters');
   var mapPinMain = mapEl.querySelector('.map__pin--main');
-
   var adForm = document.querySelector('.ad-form');
-
-  var setFormMode = function (isBlocked) {
-    var elFormArr = [mapFilters, adForm];
-    for (var i = 0; i < elFormArr.length; i++) {
-      var elForm = elFormArr[i];
-      var inputForm = elForm.querySelectorAll('input');
-      var selectForm = elForm.querySelectorAll('select');
-      var fieldsetForm = elForm.querySelectorAll('fieldset');
-      var elements = [inputForm, selectForm, fieldsetForm];
-
-      for (var j = 0; j < elements.length; j++) {
-        var element = elements[j];
-        for (var k = 0; k < element.length; k++) {
-          element[k].disabled = isBlocked;
-        }
-      }
-    }
-  };
-
-  var setBlockMode = function (isBlocked) {
-    var elBlockArr = [mapEl, adForm];
-    for (var i = 0; i < elBlockArr.length; i++) {
-      var elBlock = elBlockArr[i];
-      var toggleClassName = CLASS_NAMES_FOR_TOGGLE[i];
-
-      if (isBlocked) {
-        elBlock.classList.add(toggleClassName);
-      } else {
-        elBlock.classList.remove(toggleClassName);
-      }
-    }
-  };
-
-  var isBlockedPinModeStatus = true;
-
-  var isBlockedPinMode = function () {
-    return isBlockedPinModeStatus;
-  };
-
-  var toggleActivePinMode = function () {
-    isBlockedPinModeStatus = !isBlockedPinModeStatus;
-  };
-
-  var toggleModeActivePage = function () {
-    setBlockMode(isBlockedPinMode());
-    setFormMode(isBlockedPinMode());
-    toggleActivePinMode();
-  };
 
   var getCoordsAddressPinMain = function () {
     var mapPinMainWidth = mapPinMain.offsetWidth;
@@ -165,8 +115,8 @@
   var onMouseDown = function (evt) {
     evt.preventDefault();
 
-    if (!isBlockedPinMode()) {
-      toggleModeActivePage();
+    if (!window.isBlockedPinMode()) {
+      window.toggleModeActivePage();
     }
 
     var pinBlock = mapPinMain.getBoundingClientRect();
@@ -193,7 +143,7 @@
 
   var initModule = function () {
     displayAddress();
-    toggleModeActivePage();
+    window.toggleModeActivePage();
 
     mapPinMain.addEventListener('mousedown', onMouseDown);
   };
