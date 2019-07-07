@@ -115,8 +115,8 @@
   var onMouseDown = function (evt) {
     evt.preventDefault();
 
-    if (!window.isBlockedPinMode()) {
-      window.toggleModeActivePage();
+    if (window.pageMode.isBlocked()) {
+      window.pageMode.active();
     }
 
     var pinBlock = mapPinMain.getBoundingClientRect();
@@ -143,7 +143,7 @@
 
   var initModule = function () {
     displayAddress();
-    window.toggleModeActivePage();
+    window.pageMode.blocked();
 
     mapPinMain.addEventListener('mousedown', onMouseDown);
   };

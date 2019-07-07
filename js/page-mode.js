@@ -1,57 +1,71 @@
 'use strict';
 
 (function () {
-  var CLASS_NAMES_FOR_TOGGLE = ['map--faded', 'ad-form--disabled'];
+  var PageMode = function () {
+    this._init();
+  };
 
-  var mapEl = document.querySelector('.map');
-  var mapFilter = mapEl.querySelector('.map__filters');
-  var adForm = document.querySelector('.ad-form');
+  PageMode.prototype = {
+    _isBlockedStatus: false,
 
-  var isBlockedPinModeStatus = true;
-
-  var setFormMode = function (isBlocked) {
-    var elFormArr = [mapFilter, adForm];
-    for (var i = 0; i < elFormArr.length; i++) {
-      var elForm = elFormArr[i];
-      var inputForm = elForm.querySelectorAll('input');
-      var selectForm = elForm.querySelectorAll('select');
-      var fieldsetForm = elForm.querySelectorAll('fieldset');
-      var elements = [inputForm, selectForm, fieldsetForm];
-
-      for (var j = 0; j < elements.length; j++) {
-        var element = elements[j];
-        for (var k = 0; k < element.length; k++) {
-          element[k].disabled = isBlocked;
+    _init: function () {
+      this.pageBlocks = [
+        {
+          el: document.querySelector('.map'),
+          form: false,
+          blockingClassName: 'map--faded'
+        },
+        {
+          el: document.querySelector('.map__filters'),
+          form: true
+        },
+        {
+          el: document.querySelector('.ad-form'),
+          form: true,
+          blockingClassName: 'ad-form--disabled'
         }
-      }
+      ];
+    },
+
+    isBlocked: function () {
+      return this._isBlockedStatus;
+    },
+
+    _toggleModeStatus: function () {
+      this._isBlockedStatus = !this._isBlockedStatus;
+    },
+
+    _toggleMode: function (isBlocked) {
+      this.pageBlocks.forEach(function (pageBlock) {
+
+        if (pageBlock.blockingClassName) {
+          if (isBlocked) {
+            pageBlock.el.classList.remove(pageBlock.blockingClassName);
+          } else {
+            pageBlock.el.classList.add(pageBlock.blockingClassName);
+          }
+        }
+
+        if (pageBlock.form) {
+          var children = pageBlock.el.getElementsByTagName('*');
+          for (var i = 0; i < children.length; i++) {
+            if (children[i] === 'input' || 'select' || 'fieldset') {
+              children[i].disabled = !isBlocked;
+            }
+          }
+        }
+      });
+      this._toggleModeStatus();
+    },
+
+    active: function () {
+      this._toggleMode(true);
+    },
+
+    blocked: function () {
+      this._toggleMode(false);
     }
   };
 
-  var setBlockMode = function (isBlocked) {
-    var elBlockArr = [mapEl, adForm];
-    for (var i = 0; i < elBlockArr.length; i++) {
-      var elBlock = elBlockArr[i];
-      var toggleClassName = CLASS_NAMES_FOR_TOGGLE[i];
-
-      if (isBlocked) {
-        elBlock.classList.add(toggleClassName);
-      } else {
-        elBlock.classList.remove(toggleClassName);
-      }
-    }
-  };
-
-  window.isBlockedPinMode = function () {
-    return isBlockedPinModeStatus;
-  };
-
-  var toggleActivePinMode = function () {
-    isBlockedPinModeStatus = !isBlockedPinModeStatus;
-  };
-
-  window.toggleModeActivePage = function () {
-    setBlockMode(window.isBlockedPinMode());
-    setFormMode(window.isBlockedPinMode());
-    toggleActivePinMode();
-  };
+  window.pageMode = new PageMode();
 })();
