@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var data = window.data;
-
   var mapEl = document.querySelector('.map');
 
   var housingTypeDictionary = {
@@ -56,7 +54,7 @@
     parentEl.appendChild(fragment);
   };
 
-  var renderCard = function (card) {
+  var fillCard = function (card) {
     var cardTemplate = document.querySelector('#card')
       .content
       .querySelector('.map__card');
@@ -88,13 +86,16 @@
     return cardEl;
   };
 
-  var render = function () {
+  window.renderCard = function (card) {
     var mapFilter = mapEl.querySelector('.map__filters-container');
+    var cardEl = mapEl.querySelector('.map__card');
 
-    var card = renderCard(data[0]);
+    if (cardEl) {
+      cardEl.remove();
+    }
 
-    mapEl.insertBefore(card, mapFilter);
+    cardEl = fillCard(card);
+
+    mapEl.insertBefore(cardEl, mapFilter);
   };
-
-  render();
 })();

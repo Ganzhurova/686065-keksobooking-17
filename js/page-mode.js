@@ -71,4 +71,6 @@
   };
 
   window.pageMode = new PageMode();
+
+  window.pageMode.blocked();
 })();

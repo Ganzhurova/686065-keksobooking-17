@@ -80,10 +80,6 @@
   var onMouseDown = function (evt) {
     evt.preventDefault();
 
-    if (window.pageMode.isBlocked()) {
-      window.pageMode.active();
-    }
-
     var pinBlock = mapPinMain.getBoundingClientRect();
 
     var pinCoords = {
