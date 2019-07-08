@@ -82,6 +82,8 @@
     var selectTimeIn = adForm.querySelector('#timein');
     var selectTimeOut = adForm.querySelector('#timeout');
 
+    window.showAddress();
+
     setAttributesInputPrice(selectHousingType, inputPrice);
 
     inputTitle.addEventListener('invalid', function () {
