@@ -55,7 +55,10 @@
           }
         }
       });
-      this._toggleModeStatus();
+
+      if (this.isBlocked() === isBlocked) {
+        this._toggleModeStatus();
+      }
     },
 
     active: function () {
