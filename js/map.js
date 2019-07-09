@@ -98,12 +98,4 @@
       window.backend.load(successfulLoadHandler, errorHandler);
     }
   });
-
-  // window.backend.load(successfulLoadHandler, errorHandler);
-
-  // window.map = function () {
-  //   return {
-  //     data: cards
-  //   }
-  // };
 })();

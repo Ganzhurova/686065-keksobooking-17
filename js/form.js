@@ -25,19 +25,25 @@
   };
 
   var setAttributesInputPrice = function (elHousingType, elPriceInput) {
-    if (elHousingType.value === 'bungalo') {
-      elPriceInput.min = '0';
-      elPriceInput.placeholder = '0';
-    } else if (elHousingType.value === 'flat') {
-      elPriceInput.min = '1000';
-      elPriceInput.placeholder = '1000';
-    } else if (elHousingType.value === 'house') {
-      elPriceInput.min = '5000';
-      elPriceInput.placeholder = '5000';
-    } else if (elHousingType.value === 'palace') {
-      elPriceInput.min = '10000';
-      elPriceInput.placeholder = '10000';
-    }
+    var housingType = {
+      bungalo: {
+        minPrice: '0'
+      },
+      flat: {
+        minPrice: '1000'
+      },
+      house: {
+        minPrice: '5000'
+      },
+      palace: {
+        minPrice: '10000'
+      }
+    };
+
+    var type = housingType[elHousingType.value];
+
+    elPriceInput.min = type.minPrice;
+    elPriceInput.placeholder = type.minPrice;
   };
 
   var getMinPrice = function (elPriceInput) {
@@ -75,16 +81,81 @@
     syncElTime.value = time;
   };
 
+  var checkRoomCapacity = function (rooms, capacity) {
+    var indexRoom = rooms.options.selectedIndex;
+    var indexGuest = capacity.options.selectedIndex;
+
+    var roomsNumber = {
+      '1': {
+        minGuests: '1',
+        maxGuests: '1'
+      },
+      '2': {
+        minGuests: '1',
+        maxGuests: '2'
+      },
+      '3': {
+        minGuests: '1',
+        maxGuests: '3'
+      },
+      '100': {
+        minGuests: '0',
+        maxGuests: '0'
+      }
+    };
+
+    var roomsSelected = rooms.options[indexRoom];
+
+    var housingSelected = roomsNumber[roomsSelected.value];
+    var guestsSelected = capacity.options[indexGuest];
+
+    var roomsText = roomsSelected.text;
+
+    for (var i = 0; i < rooms.options.length; i++) {
+      var housing = roomsNumber[rooms.options[i].value];
+
+      for (var j = 0; j < capacity.options.length; j++) {
+        var guests = capacity.options[j];
+        var guestsValue = guests.value;
+
+        if (housing.maxGuests === guestsValue) {
+          guests.min = housing.minGuests;
+          guests.max = housing.maxGuests;
+        }
+      }
+    }
+
+    for (i = 0; i < capacity.options.length; i++) {
+      if (housingSelected.maxGuests === capacity.options[i].value) {
+        if (housingSelected.minGuests === housingSelected.maxGuests) {
+          var message = roomsText + ' ' + capacity.options[i].text;
+        } else {
+          message = roomsText + ' от ' + housingSelected.minGuests + ' до ' + housingSelected.maxGuests + ' гостей';
+        }
+      }
+    }
+
+    if (guestsSelected.min !== housingSelected.minGuests || guestsSelected.max > housingSelected.maxGuests) {
+      capacity.setCustomValidity(message);
+    } else {
+      capacity.setCustomValidity('');
+    }
+  };
+
   var initModule = function () {
     var inputTitle = adForm.querySelector('#title');
     var inputPrice = adForm.querySelector('#price');
     var selectHousingType = adForm.querySelector('#type');
     var selectTimeIn = adForm.querySelector('#timein');
     var selectTimeOut = adForm.querySelector('#timeout');
+    var selectRoom = adForm.querySelector('#room_number');
+    var selectCapacity = adForm.querySelector('#capacity');
 
     window.showAddress();
 
     setAttributesInputPrice(selectHousingType, inputPrice);
+
+    checkRoomCapacity(selectRoom, selectCapacity);
 
     inputTitle.addEventListener('invalid', function () {
       validationInputTitle(inputTitle);
@@ -112,6 +183,14 @@
 
     selectTimeOut.addEventListener('change', function () {
       syncTimeInOut(selectTimeOut, selectTimeIn);
+    });
+
+    selectRoom.addEventListener('change', function () {
+      checkRoomCapacity(selectRoom, selectCapacity);
+    });
+
+    selectCapacity.addEventListener('change', function () {
+      checkRoomCapacity(selectRoom, selectCapacity);
     });
   };
 
