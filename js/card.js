@@ -86,16 +86,25 @@
     return cardEl;
   };
 
-  window.renderCard = function (card) {
-    var mapFilter = mapEl.querySelector('.map__filters-container');
+  var removeCard = function () {
     var cardEl = mapEl.querySelector('.map__card');
 
     if (cardEl) {
       cardEl.remove();
     }
+  };
 
-    cardEl = fillCard(card);
+  window.card = {
+    render: function (card) {
+      var mapFilter = mapEl.querySelector('.map__filters-container');
 
-    mapEl.insertBefore(cardEl, mapFilter);
+      removeCard();
+
+      var cardEl = fillCard(card);
+
+      mapEl.insertBefore(cardEl, mapFilter);
+    },
+
+    remove: removeCard
   };
 })();

@@ -7,19 +7,6 @@
   var pinsListEl = document.querySelector('.map__pins');
   var pinMain = pinsListEl.querySelector('.map__pin--main');
 
-  var getPins = function () {
-    var pinsArr = [];
-    var pins = pinsListEl.querySelectorAll('.map__pin');
-
-    for (var i = 0; i < pins.length; i++) {
-      if (pins[i].className === 'map__pin') {
-        pinsArr.push(pins[i]);
-      }
-    }
-
-    return pinsArr;
-  };
-
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === 27) {
       closeCardPopup();
@@ -44,13 +31,13 @@
 
   var renderCardHandler = function (pinEl, card) {
     pinEl.addEventListener('click', function () {
-      window.renderCard(card);
+      window.card.render(card);
       closeCardHandler();
     });
   };
 
   var addClickkHandler = function (cardsData) {
-    var pinsEl = getPins();
+    var pinsEl = window.pin.get();
 
     for (var i = 0; i < pinsEl.length; i++) {
       renderCardHandler(pinsEl[i], cardsData[i]);
@@ -58,14 +45,16 @@
   };
 
   var updatePins = function () {
+    window.card.remove();
+
     if (housingType === 'any') {
-      window.renderPins(cards);
+      window.pin.render(cards);
       addClickkHandler(cards);
     } else {
       var newCards = cards.filter(function (card) {
         return card.offer.type === housingType;
       });
-      window.renderPins(newCards);
+      window.pin.render(newCards);
       addClickkHandler(newCards);
     }
   };
@@ -78,18 +67,12 @@
   var successfulLoadHandler = function (data) {
     cards = data;
 
-    window.renderPins(cards);
+    window.pin.render(cards);
     addClickkHandler(cards);
   };
 
   var errorHandler = function () {
-    var main = document.querySelector('main');
-    var errorTemplate = document.querySelector('#error')
-      .content
-      .querySelector('.error');
-    var errorEl = errorTemplate.cloneNode(true);
-
-    main.appendChild(errorEl);
+    window.statusMessage.error();
   };
 
   pinMain.addEventListener('mousedown', function () {

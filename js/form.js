@@ -3,6 +3,9 @@
 (function () {
   var adForm = document.querySelector('.ad-form');
 
+  var inputTitle = adForm.querySelector('#title');
+  var inputPrice = adForm.querySelector('#price');
+
   var validationInputTitle = function (elTitleInput) {
     if (elTitleInput.validity.tooShort) {
       elTitleInput.setCustomValidity('Заголовок должен состоять минимум из 30-и символов');
@@ -142,14 +145,32 @@
     }
   };
 
+  var resetPage = function () {
+    window.pageMode.blocked();
+    adForm.reset();
+    window.pin.remove();
+    window.card.remove();
+    window.pinMain.reset();
+    window.showAddress();
+  };
+
+  var successfulSaveHandler = function () {
+    resetPage();
+    window.statusMessage.success();
+  };
+
+  var errorHandler = function () {
+    window.statusMessage.error();
+  };
+
   var initModule = function () {
-    var inputTitle = adForm.querySelector('#title');
-    var inputPrice = adForm.querySelector('#price');
+
     var selectHousingType = adForm.querySelector('#type');
     var selectTimeIn = adForm.querySelector('#timein');
     var selectTimeOut = adForm.querySelector('#timeout');
     var selectRoom = adForm.querySelector('#room_number');
     var selectCapacity = adForm.querySelector('#capacity');
+    var resetButton = adForm.querySelector('.ad-form__reset');
 
     window.showAddress();
 
@@ -191,6 +212,16 @@
 
     selectCapacity.addEventListener('change', function () {
       checkRoomCapacity(selectRoom, selectCapacity);
+    });
+
+    resetButton.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      resetPage();
+    });
+
+    adForm.addEventListener('submit', function (evt) {
+      window.backend.save(new FormData(adForm), successfulSaveHandler, errorHandler);
+      evt.preventDefault();
     });
   };
 
