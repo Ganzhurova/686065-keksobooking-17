@@ -6,6 +6,8 @@
 
   var mapEl = document.querySelector('.map');
   var mapPinMain = mapEl.querySelector('.map__pin--main');
+  var pinMainTop = mapPinMain.style.top;
+  var pinMainLeft = mapPinMain.style.left;
 
   var getEndCoords = function (moveEvt, mouseOffset) {
     var mapLimitCoords = {
@@ -101,6 +103,14 @@
 
     document.addEventListener('mouseup', onMouseUp);
   };
+
+  window.pinMain = {
+    reset: function () {
+      mapPinMain.style.top = pinMainTop;
+      mapPinMain.style.left = pinMainLeft;
+    }
+  };
+
 
   mapPinMain.addEventListener('mousedown', onMouseDown);
 })();
