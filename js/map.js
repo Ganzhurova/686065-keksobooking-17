@@ -8,36 +8,13 @@
   var pinsListEl = document.querySelector('.map__pins');
   var pinMain = pinsListEl.querySelector('.map__pin--main');
 
-  var onPopupEscPress = function (evt) {
-    if (evt.keyCode === 27) {
-      closeCardPopup();
-    }
-  };
-
-  var closeCardPopup = function () {
-    var cardEl = document.querySelector('.map__card');
-    cardEl.remove();
-    document.removeEventListener('keydown', onPopupEscPress);
-  };
-
-  var closeCardHandler = function () {
-    var cardCloseButton = document.querySelector('.popup__close');
-
-    document.addEventListener('keydown', onPopupEscPress);
-
-    cardCloseButton.addEventListener('click', function () {
-      closeCardPopup();
-    });
-  };
-
   var renderCardHandler = function (pinEl, card) {
     pinEl.addEventListener('click', function () {
       window.card.render(card);
-      closeCardHandler();
     });
   };
 
-  var addClickkHandler = function (cardsData) {
+  var addClickHandler = function (cardsData) {
     var pinsEl = window.pin.get();
 
     for (var i = 0; i < pinsEl.length; i++) {
@@ -108,7 +85,7 @@
     });
 
     window.pin.render(newCards);
-    addClickkHandler(newCards);
+    addClickHandler(newCards);
   };
 
   var addOnChange = function (key) {
