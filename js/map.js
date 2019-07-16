@@ -90,10 +90,10 @@
     window.pin.render(newCards);
   };
 
-  window.housingFilter._onChange = function (newValue, key) {
+  window.housingFilter._onChange = window.debounce(function (newValue, key) {
     housing[key] = newValue;
     updatePins();
-  };
+  });
 
 
   var successfulLoadHandler = function (data) {
