@@ -5,33 +5,43 @@
 
   var housing = window.housingFilter.renderValue();
 
-  var pinsListEl = document.querySelector('.map__pins');
-  var pinMain = pinsListEl.querySelector('.map__pin--main');
-
-  var renderCardHandler = function (pinEl, card) {
-    pinEl.addEventListener('click', function () {
-      window.card.render(card);
-    });
-  };
-
-  var addClickHandler = function (cardsData) {
-    var pinsEl = window.pin.get();
-
-    for (var i = 0; i < pinsEl.length; i++) {
-      renderCardHandler(pinsEl[i], cardsData[i]);
-    }
-  };
+  var pinMain = document.querySelector('.map__pin--main');
 
   var getPriceOption = function (price) {
     if (price < 10000) {
-      var option = 'low';
+      return 'low';
     } else if (price > 50000) {
-      option = 'high';
+      return 'high';
     } else {
-      option = 'middle';
+      return 'middle';
     }
+  };
 
-    return option;
+  var transformData = function (data) {
+    var modifiedData = {};
+
+    for (var key in data.offer) {
+      if (data.offer.hasOwnProperty(key)) {
+        var propertyData = data.offer[key];
+
+        if (housing[key]) {
+          modifiedData[key] = String(propertyData);
+        }
+
+        switch (key) {
+          case 'price':
+            modifiedData[key] = getPriceOption(propertyData);
+            break;
+
+          case 'features':
+            for (var i = 0; i < propertyData.length; i++) {
+              modifiedData[propertyData[i]] = propertyData[i];
+            }
+            break;
+        }
+      }
+    }
+    return modifiedData;
   };
 
   var getMaxRank = function () {
@@ -48,65 +58,46 @@
 
   var getCardRank = function (card) {
     var rank = 0;
-    var priceCard = card.offer.price;
-    card.offer.price = getPriceOption(card.offer.price);
+
+    var dataForRank = transformData(card);
 
     for (var key in housing) {
       if (housing.hasOwnProperty(key)) {
-        var filterValue = housing[key];
-        var cardValue = String(card.offer[key]);
 
-        if (filterValue === 'any') {
+        var filterValue = housing[key];
+        var cardValue = dataForRank[key];
+
+        if (filterValue === 'any' || filterValue === cardValue) {
           rank++;
-        } else if (filterValue === cardValue) {
-          rank++;
-        } else if (cardValue === 'undefined') {
-          for (var i = 0; i < card.offer.features.length; i++) {
-            if (filterValue === card.offer.features[i]) {
-              rank++;
-            }
-          }
         }
       }
     }
 
-    card.offer.price = priceCard;
     return rank;
   };
+
+  var maxRank = getMaxRank();
 
   var updatePins = function () {
     window.card.remove();
 
     var newCards = cards.filter(function (card) {
-      var maxRank = getMaxRank();
       var cardRank = getCardRank(card);
 
       return cardRank === maxRank;
     });
 
     window.pin.render(newCards);
-    addClickHandler(newCards);
   };
 
-  var addOnChange = function (key) {
-    var filter = window.housingFilter[key];
-    filter.onChange = function (newValue) {
-      housing[key] = newValue;
-      updatePins();
-    };
+  window.housingFilter._onChange = function (newValue, key) {
+    housing[key] = newValue;
+    updatePins();
   };
 
-  var addChangeHandler = function () {
-    for (var key in window.housingFilter) {
-      if (window.housingFilter.hasOwnProperty(key)) {
-        addOnChange(key);
-      }
-    }
-  };
 
   var successfulLoadHandler = function (data) {
     cards = data;
-
     updatePins();
   };
 
@@ -118,7 +109,6 @@
     if (window.pageMode.isBlocked()) {
       window.pageMode.active();
       window.backend.load(successfulLoadHandler, errorHandler);
-      addChangeHandler();
     }
   });
 })();

@@ -22,6 +22,10 @@
     pinImg.src = card.author.avatar;
     pinImg.alt = card.offer.title;
 
+    pinEl.addEventListener('click', function () {
+      window.card.render(card);
+    });
+
     return pinEl;
   };
 
