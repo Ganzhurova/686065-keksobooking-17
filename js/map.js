@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var LIMIT_PRICE_LOW = 10000;
+  var LIMIT_PRICE_MIDDLE = 50000;
+
   var cards = [];
 
   var housing = window.housingFilter.renderValue();
@@ -8,9 +11,9 @@
   var pinMain = document.querySelector('.map__pin--main');
 
   var getPriceOption = function (price) {
-    if (price < 10000) {
+    if (price < LIMIT_PRICE_LOW) {
       return 'low';
-    } else if (price > 50000) {
+    } else if (price > LIMIT_PRICE_MIDDLE) {
       return 'high';
     } else {
       return 'middle';
@@ -102,7 +105,7 @@
   };
 
   var errorHandler = function () {
-    window.statusMessage.error();
+    window.statusMessage.showError();
   };
 
   pinMain.addEventListener('mousedown', function () {

@@ -156,11 +156,11 @@
 
   var successfulSaveHandler = function () {
     resetPage();
-    window.statusMessage.success();
+    window.statusMessage.showSuccess();
   };
 
   var errorHandler = function () {
-    window.statusMessage.error();
+    window.statusMessage.showError();
   };
 
   var initModule = function () {

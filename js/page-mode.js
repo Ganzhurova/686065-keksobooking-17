@@ -49,7 +49,7 @@
         if (pageBlock.form) {
           var children = pageBlock.el.getElementsByTagName('*');
           for (var i = 0; i < children.length; i++) {
-            if (children[i] === 'input' || 'select' || 'fieldset') {
+            if (children[i] === 'input' || children[i] === 'select' || children[i] === 'fieldset') {
               children[i].disabled = !isBlocked;
             }
           }
