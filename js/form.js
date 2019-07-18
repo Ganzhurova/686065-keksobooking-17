@@ -223,6 +223,9 @@
       window.backend.save(new FormData(adForm), successfulSaveHandler, errorHandler);
       evt.preventDefault();
     });
+
+    window.picture.download('.ad-form-header__input', '.ad-form-header__preview', false);
+    window.picture.download('.ad-form__input', '.ad-form__photo', true);
   };
 
   initModule();
