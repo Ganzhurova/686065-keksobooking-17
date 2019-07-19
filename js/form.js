@@ -152,6 +152,7 @@
     window.card.remove();
     window.pinMain.reset();
     window.showAddress();
+    window.picture.reset();
   };
 
   var successfulSaveHandler = function () {
