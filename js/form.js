@@ -152,15 +152,16 @@
     window.card.remove();
     window.pinMain.reset();
     window.showAddress();
+    window.picture.reset();
   };
 
   var successfulSaveHandler = function () {
     resetPage();
-    window.statusMessage.success();
+    window.statusMessage.showSuccess();
   };
 
   var errorHandler = function () {
-    window.statusMessage.error();
+    window.statusMessage.showError();
   };
 
   var initModule = function () {
@@ -223,6 +224,9 @@
       window.backend.save(new FormData(adForm), successfulSaveHandler, errorHandler);
       evt.preventDefault();
     });
+
+    window.picture.download('.ad-form-header__input', '.ad-form-header__preview', false);
+    window.picture.download('.ad-form__input', '.ad-form__photo', true);
   };
 
   initModule();

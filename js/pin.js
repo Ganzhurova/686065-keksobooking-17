@@ -22,6 +22,11 @@
     pinImg.src = card.author.avatar;
     pinImg.alt = card.offer.title;
 
+    pinEl.addEventListener('click', function () {
+      pinEl.classList.add('map__pin--active');
+      window.card.render(card, pinEl);
+    });
+
     return pinEl;
   };
 

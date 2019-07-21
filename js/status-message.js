@@ -52,12 +52,12 @@
   };
 
   window.statusMessage = {
-    error: function () {
+    showError: function () {
       var error = new Message('error');
       return error;
     },
 
-    success: function () {
+    showSuccess: function () {
       var success = new Message('success');
       return success;
     }

@@ -1,60 +1,50 @@
 'use strict';
 
 (function () {
+  var LIMIT_PRICE_LOW = 10000;
+  var LIMIT_PRICE_MIDDLE = 50000;
+
   var cards = [];
 
   var housing = window.housingFilter.renderValue();
 
-  var pinsListEl = document.querySelector('.map__pins');
-  var pinMain = pinsListEl.querySelector('.map__pin--main');
-
-  var onPopupEscPress = function (evt) {
-    if (evt.keyCode === 27) {
-      closeCardPopup();
-    }
-  };
-
-  var closeCardPopup = function () {
-    var cardEl = document.querySelector('.map__card');
-    cardEl.remove();
-    document.removeEventListener('keydown', onPopupEscPress);
-  };
-
-  var closeCardHandler = function () {
-    var cardCloseButton = document.querySelector('.popup__close');
-
-    document.addEventListener('keydown', onPopupEscPress);
-
-    cardCloseButton.addEventListener('click', function () {
-      closeCardPopup();
-    });
-  };
-
-  var renderCardHandler = function (pinEl, card) {
-    pinEl.addEventListener('click', function () {
-      window.card.render(card);
-      closeCardHandler();
-    });
-  };
-
-  var addClickkHandler = function (cardsData) {
-    var pinsEl = window.pin.get();
-
-    for (var i = 0; i < pinsEl.length; i++) {
-      renderCardHandler(pinsEl[i], cardsData[i]);
-    }
-  };
+  var pinMain = document.querySelector('.map__pin--main');
 
   var getPriceOption = function (price) {
-    if (price < 10000) {
-      var option = 'low';
-    } else if (price > 50000) {
-      option = 'high';
+    if (price < LIMIT_PRICE_LOW) {
+      return 'low';
+    } else if (price > LIMIT_PRICE_MIDDLE) {
+      return 'high';
     } else {
-      option = 'middle';
+      return 'middle';
     }
+  };
 
-    return option;
+  var transformData = function (data) {
+    var modifiedData = {};
+
+    for (var key in data.offer) {
+      if (data.offer.hasOwnProperty(key)) {
+        var propertyData = data.offer[key];
+
+        if (housing[key]) {
+          modifiedData[key] = String(propertyData);
+        }
+
+        switch (key) {
+          case 'price':
+            modifiedData[key] = getPriceOption(propertyData);
+            break;
+
+          case 'features':
+            for (var i = 0; i < propertyData.length; i++) {
+              modifiedData[propertyData[i]] = propertyData[i];
+            }
+            break;
+        }
+      }
+    }
+    return modifiedData;
   };
 
   var getMaxRank = function () {
@@ -71,77 +61,58 @@
 
   var getCardRank = function (card) {
     var rank = 0;
-    var priceCard = card.offer.price;
-    card.offer.price = getPriceOption(card.offer.price);
+
+    var dataForRank = transformData(card);
 
     for (var key in housing) {
       if (housing.hasOwnProperty(key)) {
-        var filterValue = housing[key];
-        var cardValue = String(card.offer[key]);
 
-        if (filterValue === 'any') {
+        var filterValue = housing[key];
+        var cardValue = dataForRank[key];
+
+        if (filterValue === 'any' || filterValue === cardValue) {
           rank++;
-        } else if (filterValue === cardValue) {
-          rank++;
-        } else if (cardValue === 'undefined') {
-          for (var i = 0; i < card.offer.features.length; i++) {
-            if (filterValue === card.offer.features[i]) {
-              rank++;
-            }
-          }
         }
       }
     }
 
-    card.offer.price = priceCard;
     return rank;
   };
+
+  var maxRank = getMaxRank();
 
   var updatePins = function () {
     window.card.remove();
 
     var newCards = cards.filter(function (card) {
-      var maxRank = getMaxRank();
-      var cardRank = getCardRank(card);
+      if (card.hasOwnProperty('offer')) {
+        var cardRank = getCardRank(card);
+      }
 
       return cardRank === maxRank;
     });
 
     window.pin.render(newCards);
-    addClickkHandler(newCards);
   };
 
-  var addOnChange = function (key) {
-    var filter = window.housingFilter[key];
-    filter.onChange = function (newValue) {
-      housing[key] = newValue;
-      updatePins();
-    };
-  };
-
-  var addChangeHandler = function () {
-    for (var key in window.housingFilter) {
-      if (window.housingFilter.hasOwnProperty(key)) {
-        addOnChange(key);
-      }
-    }
-  };
+  window.housingFilter._onChange = window.debounce(function (newValue, key) {
+    housing[key] = newValue;
+    updatePins();
+  });
 
   var successfulLoadHandler = function (data) {
     cards = data;
-
     updatePins();
   };
 
   var errorHandler = function () {
-    window.statusMessage.error();
+    window.statusMessage.showError();
   };
 
   pinMain.addEventListener('mousedown', function () {
     if (window.pageMode.isBlocked()) {
       window.pageMode.active();
       window.backend.load(successfulLoadHandler, errorHandler);
-      addChangeHandler();
     }
   });
 })();
