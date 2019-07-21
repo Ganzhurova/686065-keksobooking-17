@@ -10,6 +10,8 @@
       .content
       .querySelector('.map__card'),
 
+    _pin: null,
+
     _housingTypeDictionary: {
       'palace': 'дворец',
       'flat': 'квартира',
@@ -126,6 +128,10 @@
       return cardClone;
     },
 
+    _getPinEl: function (pinEl) {
+      this._pin = pinEl;
+    },
+
     _closeCard: function () {
       var that = this;
 
@@ -146,10 +152,11 @@
 
       if (cardEl) {
         cardEl.remove();
+        this._pin.classList.remove('map__pin--active');
       }
     },
 
-    render: function (data) {
+    render: function (data, pin) {
       var mapFilter = this._mapEl.querySelector('.map__filters-container');
 
       this.remove();
@@ -157,6 +164,8 @@
       var cardEl = this._fill(data);
 
       this._mapEl.insertBefore(cardEl, mapFilter);
+
+      this._getPinEl(pin);
     }
   };
 

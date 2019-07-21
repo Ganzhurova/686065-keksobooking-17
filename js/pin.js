@@ -23,7 +23,8 @@
     pinImg.alt = card.offer.title;
 
     pinEl.addEventListener('click', function () {
-      window.card.render(card);
+      pinEl.classList.add('map__pin--active');
+      window.card.render(card, pinEl);
     });
 
     return pinEl;

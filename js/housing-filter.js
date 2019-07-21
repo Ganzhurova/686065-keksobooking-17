@@ -29,7 +29,7 @@
       this.elevator = filtersForm.querySelector('#filter-elevator');
       this.conditioner = filtersForm.querySelector('#filter-conditioner');
 
-      this._addChangeHandlers();
+      this._addHandlers();
     },
 
     _onChange: function () {},
@@ -44,10 +44,27 @@
       });
     },
 
-    _addChangeHandlers: function () {
+    _addKeydownHandler: function (key) {
+      var that = this;
+
+      if (this[key].tagName.toLowerCase() === 'input') {
+        this[key].addEventListener('keydown', function (evt) {
+          if (evt.keyCode === 13) {
+            if (!that[key].hasAttribute('checked')) {
+              that[key].setAttribute('checked', 'checked');
+            } else {
+              that[key].removeAttribute('checked');
+            }
+          }
+        });
+      }
+    },
+
+    _addHandlers: function () {
       for (var key in this) {
         if (this.hasOwnProperty(key)) {
           this._addChangeHandler(key);
+          this._addKeydownHandler(key);
         }
       }
     },

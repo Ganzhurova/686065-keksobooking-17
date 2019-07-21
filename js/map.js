@@ -85,7 +85,9 @@
     window.card.remove();
 
     var newCards = cards.filter(function (card) {
-      var cardRank = getCardRank(card);
+      if (card.hasOwnProperty('offer')) {
+        var cardRank = getCardRank(card);
+      }
 
       return cardRank === maxRank;
     });
@@ -97,7 +99,6 @@
     housing[key] = newValue;
     updatePins();
   });
-
 
   var successfulLoadHandler = function (data) {
     cards = data;
