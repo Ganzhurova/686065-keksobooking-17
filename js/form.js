@@ -145,6 +145,20 @@
     }
   };
 
+  var addKeydownHandler = function (input) {
+    input.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === 13) {
+        evt.preventDefault();
+
+        if (!input.hasAttribute('checked')) {
+          input.setAttribute('checked', 'checked');
+        } else {
+          input.removeAttribute('checked');
+        }
+      }
+    });
+  };
+
   var resetPage = function () {
     window.pageMode.blocked();
     adForm.reset();
@@ -172,6 +186,7 @@
     var selectRoom = adForm.querySelector('#room_number');
     var selectCapacity = adForm.querySelector('#capacity');
     var resetButton = adForm.querySelector('.ad-form__reset');
+    var features = adForm.querySelectorAll('[name = "features"]');
 
     window.showAddress();
 
@@ -214,6 +229,11 @@
     selectCapacity.addEventListener('change', function () {
       checkRoomCapacity(selectRoom, selectCapacity);
     });
+
+    for (var i = 0; i < features.length; i++) {
+      var feature = features[i];
+      addKeydownHandler(feature);
+    }
 
     resetButton.addEventListener('click', function (evt) {
       evt.preventDefault();
