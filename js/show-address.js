@@ -16,13 +16,13 @@
     };
 
     var addressCoords = {
-      x: mapPinMainCoords.x + mapPinMainWidth / 2,
+      x: mapPinMainCoords.x + Math.round(mapPinMainWidth / 2),
       y: 0
     };
 
     if (mapEl.classList.contains('map--faded')) {
       mapPinMainHeight = 65;
-      addressCoords.y = mapPinMainCoords.y + mapPinMainHeight / 2;
+      addressCoords.y = mapPinMainCoords.y + Math.round(mapPinMainHeight / 2);
     } else {
       mapPinMainHeight = 87;
       addressCoords.y = mapPinMainCoords.y + mapPinMainHeight;
