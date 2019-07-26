@@ -1,10 +1,10 @@
 'use strict';
 
 (function () {
-  var mapEl = document.querySelector('.map');
+  var PIN_WIDTH = 50;
+  var PIN_HEIGHT = 70;
 
-  var widthPin = 50;
-  var heightPin = 70;
+  var mapEl = document.querySelector('.map');
 
   var renderPin = function (card) {
     var pinTemplate = document.querySelector('#pin')
@@ -13,8 +13,8 @@
     var pinEl = pinTemplate.cloneNode(true);
     var pinImg = pinEl.querySelector('img');
 
-    var x = card.location.x - widthPin / 2;
-    var y = card.location.y - heightPin;
+    var x = card.location.x - PIN_WIDTH / 2;
+    var y = card.location.y - PIN_HEIGHT;
 
     pinEl.style.left = x + 'px';
     pinEl.style.top = y + 'px';
