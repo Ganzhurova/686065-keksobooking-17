@@ -1,14 +1,14 @@
 'use strict';
 
 (function () {
-  var HOUSING_TYPE = [
+  var HOUSING_TYPES = [
     'palace',
     'flat',
     'house',
     'bungalo'
   ];
 
-  var TIME = [
+  var TIMES = [
     '12:00',
     '13:00',
     '14:00'
@@ -69,11 +69,11 @@
         title: this.title,
         address: String(x) + ', ' + String(y),
         price: this.price,
-        type: window.supportFunction.getRandomValue(HOUSING_TYPE, false),
+        type: window.supportFunction.getRandomValue(HOUSING_TYPES, false),
         rooms: this.rooms,
         guests: this.guests,
-        checkin: window.supportFunction.getRandomValue(TIME, false),
-        checkout: window.supportFunction.getRandomValue(TIME, false),
+        checkin: window.supportFunction.getRandomValue(TIMES, false),
+        checkout: window.supportFunction.getRandomValue(TIMES, false),
         features: window.supportFunction.getArrayRandomLength(FEATURES),
         description: 'Рядом стадион',
         photos: window.supportFunction.getArrayRandomLength(photos)
