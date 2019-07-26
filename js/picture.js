@@ -7,15 +7,17 @@
   var makeImgEl = function () {
     var imgEl = document.createElement('img');
     imgEl.style = 'width: 100%';
+    // imgEl.src = '';
 
     return imgEl;
   };
 
-  var fillPreviewParentsArr = function (containerEl, previewParentTemplate, previewParentSelector) {
+  var fillPreviewParentsArr = function (containerEl, previewParentTemplate, previewParentSelector, src) {
     var parent = {
       container: containerEl,
       initialState: previewParentTemplate,
-      selector: previewParentSelector
+      selector: previewParentSelector,
+      srcDefault: src
     };
 
     previewParents.push(parent);
@@ -29,8 +31,6 @@
 
       var initialPreviewParent = previewParent.cloneNode(true);
 
-      fillPreviewParentsArr(container, initialPreviewParent, previewParentSelector);
-
       if (previewParent.children.length) {
         var preview = previewParent.querySelector('img');
       } else {
@@ -38,11 +38,14 @@
         previewParent.appendChild(preview);
       }
 
+      fillPreviewParentsArr(container, initialPreviewParent, previewParentSelector, preview.src);
+
       fileChooser.addEventListener('change', function () {
         var file = fileChooser.files[0];
         var fileName = file.name.toLowerCase();
 
         if (isManyPictures && preview.src) {
+
           var previewTemplate = previewParent.cloneNode(true);
 
           preview = previewTemplate.querySelector('img');
@@ -70,13 +73,25 @@
         var parent = previewParents[i];
         var parentsEl = parent.container.querySelectorAll(parent.selector);
 
+
         if (parentsEl.length > 1) {
-          for (var j = 1; j < parentsEl.length; j++) {
+          for (var j = 0; j < parentsEl.length - 1; j++) {
             parentsEl[j].remove();
           }
         }
 
-        parent.container.replaceChild(parent.initialState, parentsEl[0]);
+        var previewImg = parentsEl[parentsEl.length - 1].querySelector('img');
+
+        if (parent.srcDefault === '') {
+          previewImg.removeAttribute('src');
+        }
+
+        if (previewImg.hasAttribute('src')) {
+          previewImg.src = parent.srcDefault;
+        }
+
+        // parent.container.replaceChild(parent.initialState, parentsEl[0]);
+
       }
     }
   };
