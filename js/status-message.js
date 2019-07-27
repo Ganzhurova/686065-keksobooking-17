@@ -37,11 +37,7 @@
     },
 
     _onMessageEscPress: function (evt) {
-      var that = this;
-
-      if (evt.keyCode === 27) {
-        that._closeMessage();
-      }
+      window.util.isEscEvent(evt, this._closeMessage.bind(this));
     },
 
     _closeMessage: function () {

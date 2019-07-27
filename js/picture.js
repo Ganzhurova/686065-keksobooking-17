@@ -2,7 +2,7 @@
 
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-  var previewParents = [];
+  var previews = [];
 
   var makeImgEl = function () {
     var imgEl = document.createElement('img');
@@ -11,14 +11,11 @@
     return imgEl;
   };
 
-  var fillPreviewParentsArr = function (containerEl, previewParentTemplate, previewParentSelector) {
-    var parent = {
-      container: containerEl,
-      initialState: previewParentTemplate,
-      selector: previewParentSelector
-    };
-
-    previewParents.push(parent);
+  var createImgEl = function (parentEl) {
+    if (parentEl.children.length === 0) {
+      var imgEl = makeImgEl();
+      parentEl.appendChild(imgEl);
+    }
   };
 
   window.picture = {
@@ -27,26 +24,28 @@
       var previewParent = document.querySelector(previewParentSelector);
       var container = previewParent.parentNode;
 
-      var initialPreviewParent = previewParent.cloneNode(true);
+      createImgEl(previewParent);
 
-      fillPreviewParentsArr(container, initialPreviewParent, previewParentSelector);
+      var previewImg = previewParent.querySelector('img');
 
-      if (previewParent.children.length) {
-        var preview = previewParent.querySelector('img');
-      } else {
-        preview = makeImgEl();
-        previewParent.appendChild(preview);
-      }
+      var preview = {
+        container: container,
+        parentSelector: previewParentSelector,
+        element: previewImg,
+        srcDefault: previewImg.src
+      };
+
+      previews.push(preview);
 
       fileChooser.addEventListener('change', function () {
         var file = fileChooser.files[0];
         var fileName = file.name.toLowerCase();
 
-        if (isManyPictures && preview.src) {
+        if (isManyPictures && previewImg.src) {
           var previewTemplate = previewParent.cloneNode(true);
-
-          preview = previewTemplate.querySelector('img');
+          previewImg = previewTemplate.querySelector('img');
           container.appendChild(previewTemplate);
+          preview.element = previewImg;
         }
 
         var matches = FILE_TYPES.some(function (it) {
@@ -57,7 +56,7 @@
           var reader = new FileReader();
 
           reader.addEventListener('load', function () {
-            preview.src = reader.result;
+            previewImg.src = reader.result;
           });
 
           reader.readAsDataURL(file);
@@ -66,17 +65,24 @@
     },
 
     reset: function () {
-      for (var i = 0; i < previewParents.length; i++) {
-        var parent = previewParents[i];
-        var parentsEl = parent.container.querySelectorAll(parent.selector);
+      for (var i = 0; i < previews.length; i++) {
+        var preview = previews[i];
+        var images = preview.container.querySelectorAll(preview.parentSelector + ' img');
+        var previewEl = preview.element;
 
-        if (parentsEl.length > 1) {
-          for (var j = 1; j < parentsEl.length; j++) {
-            parentsEl[j].remove();
+        for (var j = 0; j < images.length; j++) {
+          if (images[j] !== previewEl) {
+            images[j].parentNode.remove();
           }
         }
 
-        parent.container.replaceChild(parent.initialState, parentsEl[0]);
+        if (preview.srcDefault === '') {
+          previewEl.removeAttribute('src');
+        }
+
+        if (previewEl.hasAttribute('src')) {
+          previewEl.src = preview.srcDefault;
+        }
       }
     }
   };

@@ -47,11 +47,9 @@
         }
 
         if (pageBlock.form) {
-          var children = pageBlock.el.getElementsByTagName('*');
-          for (var i = 0; i < children.length; i++) {
-            if (children[i].tagName.toLowerCase() === 'input' || children[i].tagName.toLowerCase() === 'select' || children[i].tagName.toLowerCase() === 'fieldset') {
-              children[i].disabled = !isBlocked;
-            }
+          var formElements = pageBlock.el.querySelectorAll('input, select, fieldset');
+          for (var i = 0; i < formElements.length; i++) {
+            formElements[i].disabled = !isBlocked;
           }
         }
       });

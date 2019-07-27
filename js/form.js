@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var TITLE_LENGTH = 30; // symbols
+  var MAX_PRICE = 1000000;
+
   var adForm = document.querySelector('.ad-form');
 
   var inputTitle = adForm.querySelector('#title');
@@ -20,7 +23,7 @@
 
   var checkInputTitle = function (evt) {
     var target = evt.target;
-    if (target.value.length < 30) {
+    if (target.value.length < TITLE_LENGTH) {
       target.setCustomValidity('Заголовок должен состоять минимум из 30-и символов');
     } else {
       target.setCustomValidity('');
@@ -70,7 +73,7 @@
   var checkInputPrice = function (evt, elPriceInput) {
     var minPrice = getMinPrice(elPriceInput);
     var target = evt.target;
-    if (target.value > 1000000) {
+    if (target.value > MAX_PRICE) {
       target.setCustomValidity('Максимальная цена 1 000 000');
     } else if (target.value < minPrice) {
       target.setCustomValidity('Минимальная цена ' + minPrice);
@@ -143,20 +146,6 @@
     } else {
       capacity.setCustomValidity('');
     }
-  };
-
-  var addKeydownHandler = function (input) {
-    input.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === 13) {
-        evt.preventDefault();
-
-        if (!input.hasAttribute('checked')) {
-          input.setAttribute('checked', 'checked');
-        } else {
-          input.removeAttribute('checked');
-        }
-      }
-    });
   };
 
   var resetPage = function () {
@@ -232,7 +221,7 @@
 
     for (var i = 0; i < features.length; i++) {
       var feature = features[i];
-      addKeydownHandler(feature);
+      window.input.checkedByEnter(feature);
     }
 
     resetButton.addEventListener('click', function (evt) {

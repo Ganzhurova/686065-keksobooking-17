@@ -1,14 +1,14 @@
 'use strict';
 
 (function () {
-  var HOUSING_TYPE = [
+  var HOUSING_TYPES = [
     'palace',
     'flat',
     'house',
     'bungalo'
   ];
 
-  var TIME = [
+  var TIMES = [
     '12:00',
     '13:00',
     '14:00'
@@ -23,11 +23,13 @@
     'conditioner'
   ];
 
-  var photos = [
+  var PHOTOS = [
     'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
+
+  var MAX_NUMBER_AVATARS = 8;
 
   var mapEl = document.querySelector('.map');
 
@@ -44,9 +46,7 @@
     bottomY: pin.bottomY + pin.height
   };
 
-  var maxNumberAvatars = 8;
-
-  var avatarNumbers = window.supportFunction.getArr(1, maxNumberAvatars);
+  var avatarNumbers = window.supportFunction.getArr(1, MAX_NUMBER_AVATARS);
 
   var arrX = window.supportFunction.getArr(coords.leftX, coords.rightX);
   var arrY = window.supportFunction.getArr(coords.topY, coords.bottomY);
@@ -69,14 +69,14 @@
         title: this.title,
         address: String(x) + ', ' + String(y),
         price: this.price,
-        type: window.supportFunction.getRandomValue(HOUSING_TYPE, false),
+        type: window.supportFunction.getRandomValue(HOUSING_TYPES, false),
         rooms: this.rooms,
         guests: this.guests,
-        checkin: window.supportFunction.getRandomValue(TIME, false),
-        checkout: window.supportFunction.getRandomValue(TIME, false),
+        checkin: window.supportFunction.getRandomValue(TIMES, false),
+        checkout: window.supportFunction.getRandomValue(TIMES, false),
         features: window.supportFunction.getArrayRandomLength(FEATURES),
         description: 'Рядом стадион',
-        photos: window.supportFunction.getArrayRandomLength(photos)
+        photos: window.supportFunction.getArrayRandomLength(PHOTOS)
       };
       this.location = {
         x: x,
@@ -100,7 +100,7 @@
   var createData = function () {
     var data = [];
 
-    for (var i = 0; i < maxNumberAvatars; i++) {
+    for (var i = 0; i < MAX_NUMBER_AVATARS; i++) {
       var objData = new DataObj();
 
       data.push(objData);
