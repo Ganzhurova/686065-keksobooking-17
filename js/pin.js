@@ -3,6 +3,7 @@
 (function () {
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
+  var PIN_MAX_NUMBER = 5;
 
   var mapEl = document.querySelector('.map');
 
@@ -49,7 +50,7 @@
 
       removePins();
 
-      var takeNumber = Math.min(data.length, 5);
+      var takeNumber = Math.min(data.length, PIN_MAX_NUMBER);
       var fragment = document.createDocumentFragment();
 
       for (var i = 0; i < takeNumber; i++) {

@@ -7,7 +7,7 @@
 
   var getCoordsAddressPinMain = function () {
     var mapPinMainWidth = mapPinMain.offsetWidth;
-    var mapPinMainHeight = 0;
+    var mapPinMainHeight = mapPinMain.offsetHeight;
     var mapPinMainStyle = getComputedStyle(mapPinMain);
 
     var mapPinMainCoords = {
@@ -21,10 +21,11 @@
     };
 
     if (mapEl.classList.contains('map--faded')) {
-      mapPinMainHeight = 65;
       addressCoords.y = mapPinMainCoords.y + Math.round(mapPinMainHeight / 2);
     } else {
-      mapPinMainHeight = 87;
+      var pseudoAfterHeight = parseInt(getComputedStyle(mapPinMain, ':after').height, 10);
+
+      mapPinMainHeight += pseudoAfterHeight;
       addressCoords.y = mapPinMainCoords.y + mapPinMainHeight;
     }
 
