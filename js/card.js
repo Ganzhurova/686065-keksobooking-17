@@ -140,11 +140,7 @@
     },
 
     _onPopupEscPress: function (evt) {
-      var that = this;
-
-      if (evt.keyCode === 27) {
-        that._closeCard();
-      }
+      window.util.isEscEvent(evt, this._closeCard.bind(this));
     },
 
     remove: function () {

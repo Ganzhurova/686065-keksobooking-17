@@ -68,20 +68,20 @@
       for (var i = 0; i < previews.length; i++) {
         var preview = previews[i];
         var images = preview.container.querySelectorAll(preview.parentSelector + ' img');
-        var imgEl = preview.element;
+        var previewEl = preview.element;
 
         for (var j = 0; j < images.length; j++) {
-          if (images[j] !== imgEl) {
+          if (images[j] !== previewEl) {
             images[j].parentNode.remove();
           }
         }
 
         if (preview.srcDefault === '') {
-          imgEl.removeAttribute('src');
+          previewEl.removeAttribute('src');
         }
 
-        if (imgEl.hasAttribute('src')) {
-          imgEl.src = preview.srcDefault;
+        if (previewEl.hasAttribute('src')) {
+          previewEl.src = preview.srcDefault;
         }
       }
     }

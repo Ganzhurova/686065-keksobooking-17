@@ -145,20 +145,6 @@
     }
   };
 
-  var addKeydownHandler = function (input) {
-    input.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === 13) {
-        evt.preventDefault();
-
-        if (!input.hasAttribute('checked')) {
-          input.setAttribute('checked', 'checked');
-        } else {
-          input.removeAttribute('checked');
-        }
-      }
-    });
-  };
-
   var resetPage = function () {
     window.pageMode.blocked();
     adForm.reset();
@@ -232,7 +218,7 @@
 
     for (var i = 0; i < features.length; i++) {
       var feature = features[i];
-      addKeydownHandler(feature);
+      window.input.checkedByEnter(feature);
     }
 
     resetButton.addEventListener('click', function (evt) {

@@ -45,22 +45,8 @@
     },
 
     _addKeydownHandler: function (key) {
-      var that = this;
-
       if (this[key].tagName.toLowerCase() === 'input') {
-        this[key].addEventListener('keydown', function (evt) {
-          if (evt.keyCode === 13) {
-            var event = new Event('change');
-
-            if (!that[key].hasAttribute('checked')) {
-              that[key].setAttribute('checked', 'checked');
-              that[key].dispatchEvent(event);
-            } else {
-              that[key].removeAttribute('checked');
-              that[key].dispatchEvent(event);
-            }
-          }
-        });
+        window.input.checkedByEnter(this[key]);
       }
     },
 
